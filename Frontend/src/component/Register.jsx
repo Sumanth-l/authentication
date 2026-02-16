@@ -12,6 +12,12 @@ const Register = () => {
 const handleSubmiyt = async (e) => {
   e.preventDefault();
 
+  // Validate all fields are filled
+  if (!user.name || !user.email || !user.password) {
+    alert("Please fill in all fields");
+    return;
+  }
+
   try {
     const res = await fetch("http://localhost:5000/user/register", {
       method: "POST",
@@ -24,9 +30,16 @@ const handleSubmiyt = async (e) => {
     const data = await res.json();
     console.log(data);
 
-    alert(data.message);
+    if (res.ok) {
+      alert(data.message);
+      // Clear form after successful registration
+      setUser({ name: "", email: "", password: "" });
+    } else {
+      alert(data.message || "Registration failed");
+    }
   } catch (error) {
     console.log(error);
+    alert("Error registering user");
   }
 };
 
