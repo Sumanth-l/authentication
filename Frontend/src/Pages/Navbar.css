@@ -1,0 +1,86 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  overflow-x: hidden;
+  background: #000;
+}
+
+/* Navbar Main */
+.navbar {
+  height: 100px;
+  width: 100%;
+  background: #09090B;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 40px;
+
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+}
+
+/* Left section (logo + home) */
+.left-section {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  height: 120px;
+  width: auto;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+/* UL styling */
+.navbar ul {
+  display: flex;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Right section */
+.nav-right {
+  display: flex;
+  align-items: center;
+}
+
+/* Buttons */
+.nav-btn {
+  padding: 12px 28px;
+  border-radius: 999px;
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+
+  background: transparent;
+  border: 1px solid transparent;
+
+  transition: 0.3s ease;
+}
+
+/* Hover Effect */
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.6);
+  transform: translateY(-2px);
+}

@@ -1,15 +1,18 @@
-import React from 'react'
-import { useState } from 'react'
+import React, { useState } from "react";
+import "./Login.css";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Login = () => {
+  const [user, setUser] = useState({
+    email: "",
+    password: ""
+  });
 
-    const[user,setUse]=useState({
-        email:"",
-        password:""
-    })
-  
+  const navigate=useNavigate();
 
- const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
+
     e.preventDefault();
 
     try {
@@ -24,8 +27,7 @@ const Login = () => {
       const data = await res.json();
 
       if (res.ok) {
-        alert(data.message);
-        console.log(data);
+         navigate('/')
       } else {
         alert(data.message);
       }
@@ -36,14 +38,67 @@ const Login = () => {
   };
 
   return (
-    <div>
-    <form onSubmit={handleSubmit}>
-        <input type="email" placeholder="Enter your email" value={user.email} onChange={(e)=>setUse({...user,email:e.target.value})}/>
-     <input type="password" placeholder="Enter your password" value={user.password} onChange={(e)=>setUse({...user,password:e.target.value})}/>
-     <button type="submit">Submit</button>
-    </form>
-    </div>
-  )
-}
+    <div className="login-page">
 
-export default Login
+      {/* LEFT SIDE */}
+      <div className="login-left">
+        <h3 className="brand">BookNow</h3>
+
+        <h1>Sign in to BookNow</h1>
+        <p>
+          Book your hotels, events, and services easily with BookNow.
+          Fast, simple, and secure booking platform.
+        </p>
+      </div>
+
+      {/* RIGHT SIDE */}
+      <div className="login-right">
+        <div className="login-card">
+
+          <button className="social-btn">Sign in with Google</button>
+          <button className="social-btn">Sign in with Twitter</button>
+
+          <hr />
+
+          <form onSubmit={handleSubmit}>
+            <label>Email address</label>
+            <input
+              type="email"
+              placeholder="Email address"
+              value={user.email}
+              onChange={(e) => setUser({ ...user, email: e.target.value })}
+            />
+
+            <label>Password</label>
+            <input
+              type="password"
+              placeholder="Password"
+              value={user.password}
+              onChange={(e) => setUser({ ...user, password: e.target.value })}
+            />
+
+            <a href="#" className="forgot">
+              Forgot password?
+            </a>
+
+            <div className="remember">
+              <input type="checkbox" />
+              <span>Remember me</span>
+            </div>
+
+            <button type="submit" className="signin-btn">
+              Sign in
+            </button>
+          </form>
+        </div>
+
+        <p className="signup">
+          Not a member? <Link to="/register">Sign up now</Link>
+        </p>
+      </div>
+
+    </div>
+  );
+};
+
+export default Login;

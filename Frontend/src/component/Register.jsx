@@ -1,62 +1,103 @@
-import { useState } from "react"
+import { useState } from "react";
+import '../component/Register.css'
+import { useNavigate } from "react-router-dom";
 
 
 const Register = () => {
-  
-  const[user,setUser]=useState({
-    name:"",
-    email:"",
-    password:""
-  })
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    password: ""
+  });
 
-const handleSubmiyt = async (e) => {
-  e.preventDefault();
+  const navigate=useNavigate()
 
-  // Validate all fields are filled
-  if (!user.name || !user.email || !user.password) {
-    alert("Please fill in all fields");
-    return;
-  }
+  const handleSubmiyt = async (e) => {
+    e.preventDefault();
 
-  try {
-    const res = await fetch("http://localhost:5000/user/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(user)
-    });
-
-    const data = await res.json();
-    console.log(data);
-
-    if (res.ok) {
-      alert(data.message);
-      // Clear form after successful registration
-      setUser({ name: "", email: "", password: "" });
-    } else {
-      alert(data.message || "Registration failed");
+    if (!user.name || !user.email || !user.password) {
+      alert("Please fill in all fields");
+      return;
     }
-  } catch (error) {
-    console.log(error);
-    alert("Error registering user");
-  }
-};
 
+    try {
+      const res = await fetch("http://localhost:5000/user/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(user)
+      });
+      
 
+      const data = await res.json();
 
-
+      if (res.ok) {
+        alert(data.message);
+        setUser({ name: "", email: "", password: "" });
+        navigate('/login')
+      } else {
+        alert(data.message || "Registration failed");
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Error registering user");
+    }
+  };
 
   return (
-    <div>
-    <form onSubmit={handleSubmiyt}>
-      <input type="text" placeholder="Enter your name" value={user.name} onChange={(e)=>setUser({...user,name:e.target.value})}/>
-     <input type="email" placeholder="Enter your email" value={user.email} onChange={(e)=>setUser({...user,email:e.target.value})}/>
-     <input type="password" placeholder="Enter your password" value={user.password} onChange={(e)=>setUser({...user,password:e.target.value})}/>
-     <button type="submit">Submit</button>
-    </form>
-    </div>
-  )
-}
+    <div className="register-page">
+      
+      {/* LEFT SIDE */}
+      <div className="register-left">
+        <h3 className="brand">BookNow</h3>
 
-export default Register
+        <h1>Create your account</h1>
+        <p>
+          Join BookNow to book hotels, events, and services easily.
+          Create an account and start booking instantly.
+        </p>
+      </div>
+
+      {/* RIGHT SIDE */}
+      <div className="register-right">
+        <div className="register-card">
+
+          <form onSubmit={handleSubmiyt}>
+            <label>Name</label>
+            <input
+              type="text"
+              placeholder="Enter your name"
+              value={user.name}
+              onChange={(e) => setUser({ ...user, name: e.target.value })}
+            />
+
+            <label>Email</label>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={user.email}
+              onChange={(e) => setUser({ ...user, email: e.target.value })}
+            />
+
+            <label>Password</label>
+            <input
+              type="password"
+              placeholder="Enter your password"
+              value={user.password}
+              onChange={(e) => setUser({ ...user, password: e.target.value })}
+            />
+
+            <button type="submit" className="register-btn">
+              Sign Up
+            </button>
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+  );
+};
+
+export default Register;
