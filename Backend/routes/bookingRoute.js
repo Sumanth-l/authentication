@@ -7,11 +7,10 @@ router.get("/rooms",async(req,res)=>{
 
   try {
     await pool.query("DELETE FROM room_locks WHERE expiry_time < NOW()");
-
     const result=await pool.query(`SELECT r.id, r.room_number,
       CASE 
-        WHEN rl.room_id IS NOT NULL THEN 'NOT_AVAILABLE'
-        ELSE 'AVAILABLE'
+      WHEN rl.room_id IS NOT NULL THEN 'NOT_AVAILABLE'
+      ELSE 'AVAILABLE'
       END AS status
       FROM rooms r
       LEFT JOIN room_locks rl 
@@ -54,10 +53,14 @@ router.post("/room/lock", verifyToken, async (req, res) => {
       [room_id, user_id]
     );
 
+
+
     return res.status(200).json({
       message: "Room locked successfully",
       lock: lockRoom.rows[0],
     });
+
+
 
   } catch (error) {
     res.status(500).json({
@@ -68,5 +71,56 @@ router.post("/room/lock", verifyToken, async (req, res) => {
 });
 
 
+router.get('/hotels',async(req,res)=>{
+
+    try {
+       const result = await pool.query(`
+      SELECT h.id, h.name, h.location, h.address,
+      COUNT(r.id) AS total_rooms
+      FROM hotels h
+      LEFT JOIN rooms r ON h.id = r.hotel_id
+      GROUP BY h.id
+      ORDER BY h.id;
+    `);
+        res.status(200).json(result.rows)
+    } catch (error) {
+        res.status(500).json({
+            message: "Error fetching hotels",
+            error: error.message
+        })
+    }
+
+})
+
+
+router.get('/hotels/:hotel_id/rooms',async(req,res)=>{
+
+  try {
+    const { hotel_id } = req.params;
+
+
+    await pool.query("DELETE FROM room_locks WHERE expiry_time < NOW()");
+
+    const result = await pool.query(`
+      SELECT r.id, r.room_number,
+      CASE 
+        WHEN rl.room_id IS NOT NULL THEN 'NOT_AVAILABLE'
+        ELSE 'AVAILABLE'
+      END AS status
+      FROM rooms r
+      LEFT JOIN room_locks rl ON r.id = rl.room_id
+      WHERE r.hotel_id = $1
+      ORDER BY r.room_number;
+    `, [hotel_id]);
+
+    res.status(200).json(result.rows);
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching rooms",
+      error: error.message
+    });
+  }
+})
 
 module.exports = router;

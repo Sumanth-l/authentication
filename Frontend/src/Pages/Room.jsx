@@ -16,10 +16,10 @@ const Rooms = () => {
     fetchRooms();
   }, []);
 
-  // ✅ click handler
+  
   const handleRoomClick = async (room_id, status) => {
     if (status !== "AVAILABLE") {
-      alert("Room not available ❌");
+      alert("Room not available");
       return;
     }
 
@@ -31,8 +31,6 @@ const Rooms = () => {
       );
 
       alert(res.data.message);
-
-      // refresh rooms after locking
       fetchRooms();
     } catch (error) {
       alert(error.response?.data?.message || "Lock failed");

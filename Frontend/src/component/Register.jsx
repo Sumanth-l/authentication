@@ -49,8 +49,9 @@ const Register = () => {
     <div className="register-page">
       
       {/* LEFT SIDE */}
-      <div className="register-left">
+      <div className="register-left">  
         <h3 className="brand">BookNow</h3>
+        
 
         <h1>Create your account</h1>
         <p>

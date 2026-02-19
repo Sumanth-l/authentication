@@ -6,7 +6,6 @@ function verifyToken(req, res, next) {
     (req.headers.authorization &&
       req.headers.authorization.split(" ")[1]);
    
-     // Debugging log
   if (!token) {
     return res.status(401).json({ message: "No token found" });
   }
