@@ -70,7 +70,11 @@ router.post("/login", async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.cookie("token", token, { httpOnly: true });
+    res.cookie("token", token, {
+  httpOnly: true,
+  sameSite: "lax",
+});
+
 
     return res.status(200).json({
       message: "User Login Successfully",
