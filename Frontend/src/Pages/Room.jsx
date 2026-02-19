@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import "../Pages/Room.css";
+import { toast } from "react-toastify";
+
 
 export default function Room() {
   const [rooms, setRooms] = useState([]);
@@ -30,7 +32,7 @@ export default function Room() {
 
   const handleRoomClick = async (room_id, status) => {
     if (status !== "AVAILABLE") {
-      alert("Room not available ❌");
+      toast.error("Room not available ❌");
       return;
     }
 
@@ -41,12 +43,13 @@ export default function Room() {
         { withCredentials: true }
       );
 
-      alert(res.data.message);
+      toast.success("Room locked successfully");
 
       // refresh rooms after locking
       fetchrooms();
     } catch (error) {
-      alert(error.response?.data?.message || "Lock failed");
+      toast.error(error.response?.data?.message || "Lock failed");
+
     }
   };
 
