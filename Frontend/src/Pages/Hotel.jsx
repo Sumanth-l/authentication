@@ -1,9 +1,11 @@
 import { useState,useEffect} from "react";
 import '../Pages/Hotel.css'
+import { useNavigate } from "react-router-dom";
 
 
 export default function Hotel(){
 
+    const navigate=useNavigate();
 
     const[hotels,setHotels]=useState([]);
 
@@ -27,7 +29,7 @@ return (
             <p><b>Address:</b> {hotel.address}</p>
             <p><b>Total Rooms:</b> {hotel.total_rooms}</p>
 
-            <button className="view-btn">View Rooms</button>
+            <button className="view-btn" onClick={() => navigate(`/hotels/${hotel.id}/rooms`)}>View Rooms</button>
           </div>
         ))}
       </div>

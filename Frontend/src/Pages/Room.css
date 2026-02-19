@@ -1,40 +1,51 @@
 .rooms-container {
-  padding: 30px;
+  padding: 40px;
+  min-height: 100vh;
+  background: #0b0b0b;
   color: white;
 }
 
-.rooms-container h2 {
-  margin-bottom: 20px;
-  font-size: 24px;
+.rooms-title {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 30px;
 }
 
 .rooms-grid {
   display: grid;
-  grid-template-columns: repeat(10, 1fr); /* 10 rooms per row */
+  grid-template-columns: repeat(6, 1fr);
   gap: 15px;
+  padding: 20px;
 }
 
 .room-card {
+  background: rgba(20, 20, 20, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
   padding: 15px;
-  border-radius: 10px;
   text-align: center;
-  font-weight: bold;
+  transition: 0.3s ease;
   cursor: pointer;
-  transition: 0.3s;
 }
 
-.available {
-  background: #1e293b;
-  border: 2px solid #22c55e;
+.room-card h3 {
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: white;
 }
 
-.notavailable {
-  background: #1e293b;
-  border: 2px solid #ef4444;
-  opacity: 0.6;
+.room-card p {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.room-card.available:hover {
+  border: 1px solid rgba(34, 197, 94, 0.7);
+  transform: translateY(-4px);
+}
+
+.room-card.notavailable {
+  opacity: 0.5;
   cursor: not-allowed;
-}
-
-.room-card:hover {
-  transform: scale(1.05);
 }

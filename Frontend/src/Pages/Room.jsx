@@ -1,25 +1,36 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import "../Pages/Room.css";
 
-const Rooms = () => {
+export default function Room() {
   const [rooms, setRooms] = useState([]);
+  const { hotel_id } = useParams();
 
-  const fetchRooms = async () => {
-    const res = await axios.get("http://localhost:5000/api/rooms", {
-      withCredentials: true,
-    });
-    setRooms(res.data);
+  const fetchrooms = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/hotels/${hotel_id}/rooms`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      const data = await res.json();
+      setRooms(data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
-    fetchRooms();
-  }, []);
+    fetchrooms();
+  }, [hotel_id]);
 
-  
   const handleRoomClick = async (room_id, status) => {
     if (status !== "AVAILABLE") {
-      alert("Room not available");
+      alert("Room not available ❌");
       return;
     }
 
@@ -31,7 +42,9 @@ const Rooms = () => {
       );
 
       alert(res.data.message);
-      fetchRooms();
+
+      // refresh rooms after locking
+      fetchrooms();
     } catch (error) {
       alert(error.response?.data?.message || "Lock failed");
     }
@@ -39,7 +52,7 @@ const Rooms = () => {
 
   return (
     <div className="rooms-container">
-      <h2>Available Rooms</h2>
+      <h2 className="rooms-title">Rooms for Hotel ID: {hotel_id}</h2>
 
       <div className="rooms-grid">
         {rooms.map((room) => (
@@ -57,6 +70,4 @@ const Rooms = () => {
       </div>
     </div>
   );
-};
-
-export default Rooms;
+}
