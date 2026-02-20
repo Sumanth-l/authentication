@@ -11,7 +11,6 @@ export default function Navbar() {
         <div className="logo">
           <img src={logo} alt="BookNow" onClick={()=>navigate('/')}/>
         </div>
-
       </div>
 
       <ul className="nav-right">

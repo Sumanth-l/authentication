@@ -12,40 +12,100 @@
   margin-bottom: 30px;
 }
 
-.rooms-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 15px;
-  padding: 20px;
+/* 🔥 Replace grid with vertical card list */
+.room-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
 }
 
-.room-card {
-  background: rgba(20, 20, 20, 0.9);
+/* Full Card */
+.room-full-card {
+  display: flex;
+  background: rgba(20, 20, 20, 0.95);
+  border-radius: 18px;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 14px;
-  padding: 15px;
-  text-align: center;
+  overflow: hidden;
   transition: 0.3s ease;
-  cursor: pointer;
 }
 
-.room-card h3 {
-  font-size: 16px;
-  margin-bottom: 8px;
-  color: white;
-}
-
-.room-card p {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.65);
-}
-
-.room-card.available:hover {
-  border: 1px solid rgba(34, 197, 94, 0.7);
+.room-full-card:hover {
+  border: 1px solid rgba(255, 255, 255, 0.25);
   transform: translateY(-4px);
 }
 
-.room-card.notavailable {
-  opacity: 0.5;
+/* Left Image */
+.room-image {
+  width: 280px;
+  height: 200px;
+  overflow: hidden;
+}
+
+.room-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Right Side Info */
+.room-info {
+  flex: 1;
+  padding: 20px;
+}
+
+.room-info h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: white;
+}
+
+.room-info p {
+  font-size: 14px;
+  margin: 6px 0;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.description {
+  margin-top: 10px;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Footer */
+.room-footer {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Status */
+.status-available {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.status-unavailable {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+/* Button */
+.room-footer button {
+  padding: 8px 18px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transition: 0.3s ease;
+}
+
+.room-footer button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.room-footer button:disabled {
+  opacity: 0.4;
   cursor: not-allowed;
 }
