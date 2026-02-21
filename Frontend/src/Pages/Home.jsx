@@ -7,7 +7,7 @@ export default function Home(){
     return(
         <div className="home">
            <Hotel/>
-              <Footer/>
+        <Footer />
         </div>
     )
 }

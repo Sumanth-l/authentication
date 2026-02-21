@@ -3,7 +3,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import "../Pages/Navbar.css";
 import logo from "../assets/logo.png";
-import { SearchContext } from "../context/SearchContext";
+import {SearchContext} from "../context/SearchContext";
 
 export default function Navbar() {
   const navigate = useNavigate();
