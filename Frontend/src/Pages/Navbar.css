@@ -37,7 +37,7 @@ body {
 
 /* Logo */
 .logo img {
-  height: 90px; /* reduced slightly for balance */
+  height: 120px; /* reduced slightly for balance */
   width: auto;
   object-fit: contain;
   cursor: pointer;

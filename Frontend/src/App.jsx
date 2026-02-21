@@ -7,6 +7,7 @@ import {BrowserRouter,Route,Routes} from 'react-router-dom'
 import Room from './Pages/Room'
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Footer from './Pages/Footer.jsx'
 
 
 
@@ -15,20 +16,28 @@ import "react-toastify/dist/ReactToastify.css";
 const App = () => {
  
   return (
-    <div>
-      <ToastContainer position="top-right" autoClose={2000} />
-     <BrowserRouter>
-     <Navbar/>
-     <Routes>
-      <Route path='/' element={<Home/>}/>
-      <Route path='/login' element={<Login/>}/>
-      <Route path='/register' element={<Register/>}/>
-      <Route path="/hotels/:hotel_id/rooms" element={<Room/>} />
-     
-     </Routes>
-     </BrowserRouter>
-    </div>  
-  )
-}
+    <BrowserRouter>
+  <div className="app-container">
+
+    <Navbar />
+
+    <main className="content">
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/hotels/:hotel_id/rooms" element={<Room />} />
+      </Routes>
+    </main>
+
+   
+
+  </div>
+  
+</BrowserRouter>
+  );
+};
+  
+
 
 export default App
