@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
         if (res.ok) {
           const data = await res.json();
           setLogin(data.user);
-        }
+        }   
       } catch (err) {
         console.log(err);
       } finally {

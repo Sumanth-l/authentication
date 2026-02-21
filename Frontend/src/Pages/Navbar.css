@@ -1,3 +1,4 @@
+/* Reset */
 * {
   margin: 0;
   padding: 0;
@@ -27,7 +28,7 @@ body {
   z-index: 9999;
 }
 
-/* Left section (logo + home) */
+/* Left section */
 .left-section {
   display: flex;
   align-items: center;
@@ -35,31 +36,46 @@ body {
 }
 
 /* Logo */
-.logo {
-  display: flex;
-  align-items: center;
-}
-
 .logo img {
-  height: 120px;
+  height: 90px; /* reduced slightly for balance */
   width: auto;
   object-fit: contain;
   cursor: pointer;
 }
 
-/* UL styling */
-.navbar ul {
+/* 🔎 Center Search Bar */
+.search-bar {
+  flex: 1;
   display: flex;
-  gap: 10px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  justify-content: center;
+}
+
+.search-bar input {
+  width: 420px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  background: #141414;
+  color: white;
+  font-size: 16px;
+
+  outline: none;
+  transition: 0.3s ease;
+}
+
+/* Focus effect */
+.search-bar input:focus {
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
 }
 
 /* Right section */
 .nav-right {
   display: flex;
   align-items: center;
+  list-style: none;
+  gap: 15px;
 }
 
 /* Buttons */

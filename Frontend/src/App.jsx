@@ -11,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 
 
+
 const App = () => {
  
   return (
@@ -23,6 +24,7 @@ const App = () => {
       <Route path='/login' element={<Login/>}/>
       <Route path='/register' element={<Register/>}/>
       <Route path="/hotels/:hotel_id/rooms" element={<Room/>} />
+     
      </Routes>
      </BrowserRouter>
     </div>  
