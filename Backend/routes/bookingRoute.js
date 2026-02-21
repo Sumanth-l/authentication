@@ -141,4 +141,7 @@ router.get('/hotels/:hotel_id/rooms/:room_id',async(req,res)=>{
     }
 })
 
+
+
+
 module.exports = router;

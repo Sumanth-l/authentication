@@ -3,6 +3,7 @@ const router = require("express").Router();
 const pool=require('../db')
 const bcrypt=require('bcrypt')
 const jwt=require('jsonwebtoken')
+const verifyToken=require('../middlewear/verifyToken')
 
 
 router.post("/register", async (req, res) => {
@@ -90,7 +91,38 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post("/logout", (req, res) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: false 
+    });
+
+    return res.status(200).json({
+      message: "Logged out successfully"
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Logout failed",
+      error: error.message
+    });
+  }
+});
 
 
+router.get("/me",verifyToken,async(req,res)=>{
+  try {
+    const result = await pool.query(
+      "SELECT id,email FROM users WHERE id = $1", 
+      [req.user.id]
+    );
+     res.json({ user: result.rows[0] });
+  
+  } catch (error) {
+     res.status(500).json({ message: "Error fetching user" });
+  }
+})
 
 module.exports = router;

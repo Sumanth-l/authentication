@@ -1,13 +1,22 @@
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { AuthContext } from "../context/AuthContext";
+
 
 const Login = () => {
   const [user, setUser] = useState({
     email: "",
     password: ""
   });
+
+  const {setLogin } = useContext(AuthContext);
+
+  
+
+
 
   const navigate=useNavigate();
 
@@ -28,6 +37,8 @@ const Login = () => {
       const data = await res.json();
 
       if (res.ok) {
+        setLogin(data.user);
+        toast.success(data.message);
          navigate('/')
       } else {
         alert(data.message);
