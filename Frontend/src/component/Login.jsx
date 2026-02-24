@@ -41,11 +41,11 @@ const Login = () => {
         toast.success(data.message);
          navigate('/')
       } else {
-        alert(data.message);
+       toast.error(data.message || "Login failed");
       }
     } catch (error) {
       console.log(error);
-      alert("Server error");
+      toast.error("Error logging in");
     }
   };
 
