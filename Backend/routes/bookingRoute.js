@@ -1,13 +1,13 @@
 const router = require("express").Router();
-const pool=require('../db')
-const verifyToken=require('../middlewear/verifyToken')
+const pool = require('../db')
+const verifyToken = require('../middlewear/verifyToken')
 
 
-router.get("/rooms",async(req,res)=>{
+router.get("/rooms", async (req, res) => {
 
   try {
     await pool.query("DELETE FROM room_locks WHERE expiry_time < NOW()");
-    const result=await pool.query(`SELECT r.id, r.room_number,
+    const result = await pool.query(`SELECT r.id, r.room_number,
       CASE 
       WHEN rl.room_id IS NOT NULL THEN 'NOT_AVAILABLE'
       ELSE 'AVAILABLE'
@@ -16,7 +16,7 @@ router.get("/rooms",async(req,res)=>{
       LEFT JOIN room_locks rl 
       ON r.id = rl.room_id
       ORDER BY r.room_number;`)
-      res.status(200).json(result.rows);
+    res.status(200).json(result.rows);
   } catch (error) {
     res.status(500).json({
       message: "Error fetching rooms",
@@ -30,7 +30,7 @@ router.post("/room/lock", verifyToken, async (req, res) => {
     const { room_id } = req.body;
     const user_id = req.user.id;
 
-  
+
     const lockRoom = await pool.query(
       `
       INSERT INTO room_locks(room_id, user_id, expiry_time)
@@ -65,10 +65,10 @@ router.post("/room/lock", verifyToken, async (req, res) => {
 });
 
 
-router.get('/hotels',async(req,res)=>{
+router.get('/hotels', async (req, res) => {
 
-    try {
-       const result = await pool.query(`
+  try {
+    const result = await pool.query(`
       SELECT h.id, h.name, h.location, h.address,
       COUNT(r.id) AS total_rooms
       FROM hotels h
@@ -76,13 +76,13 @@ router.get('/hotels',async(req,res)=>{
       GROUP BY h.id
       ORDER BY h.id;
     `);
-        res.status(200).json(result.rows)
-    } catch (error) {
-        res.status(500).json({
-            message: "Error fetching hotels",
-            error: error.message
-        })
-    }
+    res.status(200).json(result.rows)
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching hotels",
+      error: error.message
+    })
+  }
 
 })
 
@@ -92,56 +92,124 @@ router.get('/hotels/:hotel_id/rooms', async (req, res) => {
     const { hotel_id } = req.params;
 
     const result = await pool.query(`
-      SELECT 
-        r.id,
-        r.hotel_id,
-        r.room_number,
-        r.room_type,
-        r.price,
-        r.max_guests,
-        r.description,
-        r.image_url,
-        CASE 
-          WHEN rl.room_id IS NOT NULL 
-               AND rl.expiry_time > NOW()
-          THEN 'NOT_AVAILABLE'
-          ELSE 'AVAILABLE'
-        END AS status
+      SELECT r.id,
+             r.room_number,
+             r.room_type,
+             r.price,
+             r.max_guests,
+             r.description,
+             r.image_url,
+             CASE
+               WHEN EXISTS (
+                 SELECT 1 FROM bookings b
+                 WHERE b.room_id = r.id
+                 AND CURRENT_DATE >= b.check_in
+                 AND CURRENT_DATE < b.check_out
+               )
+               THEN 'NOT_AVAILABLE'
+               ELSE 'AVAILABLE'
+             END AS status
       FROM rooms r
-      LEFT JOIN room_locks rl 
-        ON r.id = rl.room_id
       WHERE r.hotel_id = $1
-      ORDER BY r.room_number;
+      ORDER BY r.room_number
     `, [hotel_id]);
 
-    res.status(200).json(result.rows);
+    res.json(result.rows);
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/hotels/:hotel_id/rooms/:room_id', async (req, res) => {
+  const { room_id, hotel_id } = req.params;
+  try {
+    const result = await pool.query("SELECT * FROM rooms WHERE id=$1 AND hotel_id=$2", [room_id, hotel_id])
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Room not found" })
+    }
+    res.status(200).json(result.rows[0])
 
   } catch (error) {
     res.status(500).json({
-      message: "Error fetching rooms",
+      message: "Error fetching room",
+      error: error.message
+    })
+  }
+})
+
+//calender
+router.get("/rooms/:room_id/booked-dates", async (req, res) => {
+  try {
+    const { room_id } = req.params;
+
+    const result = await pool.query(
+      `SELECT check_in, check_out
+       FROM bookings
+       WHERE room_id = $1`,
+      [room_id]
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+router.post("/booking/create", verifyToken, async (req, res) => {
+  try {
+    const user_id = req.user.id;
+    const {
+      room_id,
+      check_in,
+      check_out,
+      guests,
+      full_name,
+      phone,
+      payment_method
+    } = req.body;
+
+    console.log("BODY:", req.body);
+
+    // 🔥 CHECK DATE CONFLICT
+    const conflict = await pool.query(
+      `SELECT * FROM bookings
+       WHERE room_id = $1
+       AND $2 < check_out
+       AND $3 > check_in`,
+      [room_id, check_in, check_out]
+    );
+
+    if (conflict.rows.length > 0) {
+      return res.status(400).json({
+        message: "Room already booked for selected dates ❌"
+      });
+    }
+
+    // 🔥 INSERT BOOKING
+    const result = await pool.query(
+      `INSERT INTO bookings
+       (user_id, room_id, check_in, check_out, guests, full_name, phone, payment_method)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+       RETURNING *`,
+      [user_id, room_id, check_in, check_out, guests, full_name, phone, payment_method]
+    );
+
+    // remove temporary lock
+    await pool.query("DELETE FROM room_locks WHERE room_id=$1", [room_id]);
+
+    res.status(201).json({
+      message: "Booking successful 🎉",
+      booking: result.rows[0]
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Booking failed",
       error: error.message
     });
   }
 });
-
-router.get('/hotels/:hotel_id/rooms/:room_id',async(req,res)=>{
-    const {room_id,hotel_id}=req.params;
-    try {
-       const result=await pool.query("SELECT * FROM rooms WHERE id=$1 AND hotel_id=$2",[room_id, hotel_id])
-        if(result.rows.length===0){
-            return res.status(404).json({message:"Room not found"})
-        }
-        res.status(200).json(result.rows[0])
-        
-    } catch (error) {
-        res.status(500).json({
-            message: "Error fetching room",
-            error: error.message
-        })
-    }
-})
-
-
-
 
 module.exports = router;
