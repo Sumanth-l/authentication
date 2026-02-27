@@ -1,44 +1,35 @@
-.rooms-container {
-  padding: 40px;
-  min-height: 100vh;
-  background: #0b0b0b;
-  color: white;
+
+.room-layout {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 40px;
 }
 
-.rooms-title {
-  text-align: center;
-  font-size: 26px;
-  font-weight: 600;
-  margin-bottom: 30px;
-}
 
-/* 🔥 Replace grid with vertical card list */
-.room-card-list {
+/* LEFT */
+.room-left {
   display: flex;
-  flex-direction: column;
   gap: 25px;
+  align-items: center;
+  min-width: 450px; /* prevents collapse */
 }
 
-/* Full Card */
-.room-full-card {
-  display: flex;
-  background: rgba(20, 20, 20, 0.95);
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  overflow: hidden;
-  transition: 0.3s ease;
+/* CENTER */
+.room-calendar {
+  justify-self: center;
 }
 
-.room-full-card:hover {
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  transform: translateY(-4px);
+/* RIGHT */
+.room-action {
+  justify-self: end;
 }
-
-/* Left Image */
 .room-image {
-  width: 280px;
-  height: 200px;
+  width: 300px;
+  height: 220px;
+  border-radius: 18px;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .room-image img {
@@ -47,65 +38,149 @@
   object-fit: cover;
 }
 
-/* Right Side Info */
+/* INFO */
 .room-info {
-  flex: 1;
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .room-info h3 {
-  font-size: 20px;
+  font-size: 22px;
   margin-bottom: 10px;
+}
+
+/* CALENDAR */
+.room-calendar {
+  flex-shrink: 0;
+}
+
+/* RIGHT BUTTON */
+.room-action button {
+  padding: 12px 26px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: transparent;
   color: white;
-}
-
-.room-info p {
-  font-size: 14px;
-  margin: 6px 0;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.description {
-  margin-top: 10px;
-  font-style: italic;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-/* Footer */
-.room-footer {
-  margin-top: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* Status */
-.status-available {
-  color: #22c55e;
-  font-weight: 600;
-}
-
-.status-unavailable {
-  color: #ef4444;
-  font-weight: 600;
-}
-
-/* Button */
-.room-footer button {
-  padding: 8px 18px;
-  border-radius: 10px;
-  border: none;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
   transition: 0.3s ease;
 }
 
-.room-footer button:hover {
-  background: rgba(255, 255, 255, 0.2);
+.room-action button:hover {
+  background: rgba(255,255,255,0.08);
 }
 
-.room-footer button:disabled {
+.room-action button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+.room-info p {
+  font-size: 15px;
+  margin: 8px 0;
+  color: #d1d5db; /* brighter grey */
+}
+
+.room-info h3 {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.room-info b {
+  color: #ffffff;
+}
+
+.status-available {
+  color: #22c55e;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+
+@media (max-width: 1200px) {
+
+  .room-layout {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    text-align: center;
+  }
+
+  .room-left {
+    justify-content: center;
+    min-width: auto;
+  }
+
+  .room-calendar {
+    justify-self: center;
+  }
+
+  .room-action {
+    justify-self: center;
+  }
+
+}
+
+
+@media (max-width: 768px) {
+
+  .rooms-container {
+    padding: 30px 20px;
+  }
+
+  .room-full-card {
+    padding: 20px;
+  }
+
+  .room-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .room-left {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .room-image {
+    width: 100%;
+    max-width: 320px;
+    height: 200px;
+  }
+
+  .room-info {
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+  }
+
+  .room-info h3 {
+    font-size: 20px;
+    margin-bottom: 6px;
+  }
+
+  .room-info p {
+    font-size: 14px;
+    margin: 4px 0;
+  }
+
+  .room-calendar {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .room-action {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .room-action button {
+    width: 90%;
+    max-width: 320px;
+  }
+
 }

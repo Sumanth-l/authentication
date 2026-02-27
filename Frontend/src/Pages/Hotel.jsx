@@ -26,7 +26,7 @@ export default function Hotel() {
 
   return (
     <div className="hotel-container">
-      <h1 className="hotel-title">Welcome to BookNow Hotel</h1>
+      <h1 className="hotel-title">Welcome to BookNow</h1>
 
       <div className="hotel-grid">
         {filteredHotels.length === 0 ? (

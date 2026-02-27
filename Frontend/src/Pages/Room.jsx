@@ -1,27 +1,26 @@
-
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "../Pages/Room.css";
+import BookingModal from "../component/BookingModal";
+import RoomCalendar from "../component/RoomCalendar";
 
 export default function Room() {
   const { hotel_id } = useParams();
 
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
 
-  // 🔹 Fetch all rooms of this hotel
+  // 🔹 Fetch rooms
   const fetchRooms = async () => {
     try {
       const res = await fetch(
         `http://localhost:5000/api/hotels/${hotel_id}/rooms`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
+        { credentials: "include" }
       );
-
       const data = await res.json();
       setRooms(data);
     } catch (error) {
@@ -33,11 +32,11 @@ export default function Room() {
     fetchRooms();
   }, [hotel_id]);
 
-  // 🔹 Handle room click
-  const handleRoomClick = async (room_id, status) => {
+  // 🔒 Lock room before opening modal
+  const handleRoomClick = async (room) => {
     if (loading) return;
-    
-    if (status !== "AVAILABLE") {
+
+    if (room.status !== "AVAILABLE") {
       toast.error("Room not available ❌");
       return;
     }
@@ -45,82 +44,117 @@ export default function Room() {
     try {
       setLoading(true);
 
-      
       await axios.post(
         "http://localhost:5000/api/room/lock",
-        { room_id },
+        { room_id: room.id },
         { withCredentials: true }
       );
 
 
-      toast.success("Room locked successfully ✅");
-      fetchRooms();
+      setSelectedRoom(room);
+      setIsModalOpen(true);
 
     } catch (error) {
-      toast.error(error.response?.data?.message || "Lock failed ❌");
+      toast.error(error.response?.data?.message || "Room already locked ❌");
     } finally {
       setLoading(false);
     }
   };
 
+  // 🔓 Unlock if modal closed without booking
+  const handleModalClose = async () => {
+    try {
+      if (selectedRoom) {
+        await axios.post(
+          "http://localhost:5000/api/room/unlock",
+          { room_id: selectedRoom.id },
+          { withCredentials: true }
+        ) ;
+      }
+    } catch (error) {
+      console.log("Unlock failed");
+    }
+
+    setIsModalOpen(false);
+    setSelectedRoom(null);
+    fetchRooms();
+  };
+
   return (
-    <div className="rooms-container">
-  <h2 className="rooms-title">Rooms for Hotel ID: {hotel_id}</h2>
+  <div className="rooms-container">
+    <h2 className="rooms-title">Rooms</h2>
 
-  <div className="room-card-list">
-    {rooms.map((room) => (
-      <div
-        key={room.id}
-        className={`room-full-card ${
-          room.status === "AVAILABLE"
-            ? "available"
-            : "notavailable"
-        }`}
-      >
-        {/* LEFT SIDE IMAGE */}
-        <div className="room-image">
-          <img
-            src={
-              room.image_url ||
-              "https://images.unsplash.com/photo-1611892440504-42a792e24d32"
-            }
-            alt="Room"
-          />
-        </div>
+    <div className="room-card-list">
+      {rooms.map((room) => (
+        <div
+          key={room.id}
+          className={`room-full-card ${
+            room.status === "AVAILABLE"
+              ? "available"
+              : "notavailable"
+          }`}
+        >
+          <div className="room-layout">
 
-        {/* RIGHT SIDE DETAILS */}
-        <div className="room-info">
-          <h3>Room {room.room_number}</h3>
+            {/* LEFT SIDE (Image + Info) */}
+            <div className="room-left">
+              <div className="room-image">
+                <img
+                  src={
+                    room.image_url ||
+                    "https://images.unsplash.com/photo-1611892440504-42a792e24d32"
+                  }
+                  alt="Room"
+                />
+              </div>
 
-          <p><b>Type:</b> {room.room_type}</p>
-          <p><b>Price:</b> ₹{room.price}</p>
-          <p><b>Max Guests:</b> {room.max_guests}</p>
-          <p className="description">{room.description}</p>
+              <div className="room-info">
+                <h3>Room {room.room_number}</h3>
+                <p><b>Type:</b> {room.room_type}</p>
+                <p><b>Price:</b> ₹{room.price}</p>
+                <p><b>Max Guests:</b> {room.max_guests}</p>
+                <p className="description">{room.description}</p>
 
-          <div className="room-footer">
-            <span
-              className={
-                room.status === "AVAILABLE"
-                  ? "status-available"  
-                  : "status-unavailable"
-              }
-            >
-              {room.status}
-            </span>
+                <span
+                  className={
+                    room.status === "AVAILABLE"
+                      ? "status-available"
+                      : "status-unavailable"
+                  }
+                >
+                  {room.status}
+                </span>
+              </div>
+            </div>
 
-            <button
-              disabled={room.status !== "AVAILABLE"}
-              onClick={() =>
-                handleRoomClick(room.id, room.status)
-              }
-            >
-              Book Now
-            </button>
+            {/* CENTER (Calendar) */}
+            <div className="room-calendar">
+              <RoomCalendar roomId={room.id} />
+            </div>
+
+            {/* RIGHT (Button) */}
+            <div className="room-action">
+              <button
+                disabled={room.status !== "AVAILABLE"}
+                onClick={() => handleRoomClick(room)}
+              >
+                Book Now
+              </button>
+            </div>
+
           </div>
         </div>
-      </div>
-    ))}
+      ))}
+    </div>
+
+    {selectedRoom && (
+      <BookingModal
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        room={selectedRoom}
+        refreshRooms={fetchRooms}
+      />
+    )}
   </div>
-</div>
-  );
+);
 }
