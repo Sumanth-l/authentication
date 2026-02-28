@@ -186,5 +186,21 @@
 }
 
 
+.hotel-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.hotel-header h2 {
+  font-size: 28px;
+  font-weight: 600;
+  color: white;
+}
+
+.hotel-location {
+  margin-top: 8px;
+  color: rgba(255,255,255,0.6);
+  font-size: 14px;
+}
 
 

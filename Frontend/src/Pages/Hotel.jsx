@@ -25,6 +25,35 @@ useEffect(() => {
   );
 }, []);
 
+const handlePickNearby = async () => {
+  if (!userLocation) {
+    toast.error("Location not available ❌");
+    return;
+  }
+
+  try {
+    const res = await fetch(
+      `http://localhost:5000/api/hotels/nearest?lat=${userLocation.latitude}&lng=${userLocation.longitude}`
+    );
+
+    const hotel = await res.json();
+
+    if (!res.ok) {
+      toast.error(hotel.message);
+      return;
+    }
+
+    // Option 1: Redirect to rooms
+    navigate(`/hotels/${hotel.id}/rooms`);
+
+    // Option 2 (Alternative):
+    // setHotels([hotel]);  // show only nearest
+
+  } catch (error) {
+    toast.error("Something went wrong ❌");
+  }
+};
+
 useEffect(() => {
   const fetchHotels = async () => {
 
@@ -37,6 +66,7 @@ useEffect(() => {
     const res = await fetch(url);
     const data = await res.json();
     setHotels(data);
+    console.log(data);
   };
 
   fetchHotels();
@@ -52,7 +82,6 @@ useEffect(() => {
   return (
     <div className="hotel-container">
       <h1 className="hotel-title">Welcome to BookNow</h1>
-
       <div className="hotel-grid">
         {filteredHotels.length === 0 ? (
           <p style={{ color: "white" }}>No hotels found</p>
@@ -81,6 +110,10 @@ useEffect(() => {
           ))
         )}
       </div>
+      <button className="floating-nearby-btn" onClick={handlePickNearby}>
+  <span>📍</span>
+  Pick Nearby Hotel
+</button>
     </div>
   );
 }

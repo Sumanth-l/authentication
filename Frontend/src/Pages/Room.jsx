@@ -8,6 +8,7 @@ import RoomCalendar from "../component/RoomCalendar";
 
 export default function Room() {
   const { hotel_id } = useParams();
+  const[hotel,setHotel] = useState(null);
 
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -28,8 +29,21 @@ export default function Room() {
     }
   };
 
+
+    const fechetHotelDetails = async () => {
+
+      try {
+        const res=await fetch(`http://localhost:5000/api/hotels/${hotel_id}`);
+        const data=await res.json();
+        setHotel(data); 
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
   useEffect(() => {
     fetchRooms();
+    fechetHotelDetails();
   }, [hotel_id]);
 
   // 🔒 Lock room before opening modal
@@ -91,7 +105,14 @@ export default function Room() {
 
   return (
   <div className="rooms-container">
-    <h2 className="rooms-title">Rooms</h2>
+    <div className="hotel-header">
+  <h2>{hotel ? hotel.name : "Loading..."}</h2>
+  {hotel && (
+    <p className="hotel-location">
+      {hotel.location} • {hotel.address}
+    </p>
+  )}
+</div>
 
     <div className="room-card-list">
       {rooms.map((room) => (

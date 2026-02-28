@@ -125,3 +125,55 @@
   font-size: 14px;
   margin-top: 6px;
 }
+
+
+
+/* Nearby Button Container */
+/* ZEPPTO STYLE FLOATING BUTTON */
+.floating-nearby-btn {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 14px 28px;
+  border-radius: 999px;
+
+  background: linear-gradient(135deg, #1f2937, #111827);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+  z-index: 999;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  transition: all 0.3s ease;
+}
+
+/* Hover effect */
+.floating-nearby-btn:hover {
+  transform: translateX(-50%) translateY(-3px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Active click */
+.floating-nearby-btn:active {
+  transform: translateX(-50%) scale(0.97);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .floating-nearby-btn {
+    width: 90%;
+    justify-content: center;
+    font-size: 14px;
+  }
+}
