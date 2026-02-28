@@ -8,15 +8,40 @@ export default function Hotel() {
   const [hotels, setHotels] = useState([]);
   const { searchQuery } = useContext(SearchContext);
 
-  useEffect(() => {
-    const fetchHotels = async () => {
-      const res = await fetch("http://localhost:5000/api/hotels");
-      const data = await res.json();
-      setHotels(data);  
-    };
+  const [userLocation, setUserLocation] = useState(null);
 
-    fetchHotels();
-  }, []);
+
+useEffect(() => {
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      setUserLocation({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      });
+    },
+    (error) => {
+      console.log("Location permission denied");
+    }
+  );
+}, []);
+
+useEffect(() => {
+  const fetchHotels = async () => {
+
+    let url = "http://localhost:5000/api/hotels";
+
+    if (userLocation) {
+      url += `?lat=${userLocation.latitude}&lng=${userLocation.longitude}`;
+    }
+
+    const res = await fetch(url);
+    const data = await res.json();
+    setHotels(data);
+  };
+
+  fetchHotels();
+
+}, [userLocation]);
 
   // Filter using context searchQuery
   const filteredHotels = hotels.filter((hotel) =>
@@ -38,6 +63,13 @@ export default function Hotel() {
               <p><b>Location:</b> {hotel.location}</p>
               <p><b>Address:</b> {hotel.address}</p>
               <p><b>Total Rooms:</b> {hotel.total_rooms}</p>
+              {hotel.distance !== undefined && hotel.distance !== null && (
+  <p className="distance">
+    📍 {hotel.distance < 1
+      ? `${(hotel.distance * 1000).toFixed(0)} meters away`
+      : `${hotel.distance.toFixed(2)} km away`}
+  </p>
+)}
 
               <button
                 className="view-btn"

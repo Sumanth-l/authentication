@@ -1,7 +1,7 @@
 import { useState } from "react";
-import '../component/Register.css'
+import "../component/Register.css";
 import { useNavigate } from "react-router-dom";
-
+import { toast } from "react-toastify";
 
 const Register = () => {
   const [user, setUser] = useState({
@@ -10,13 +10,13 @@ const Register = () => {
     password: ""
   });
 
-  const navigate=useNavigate()
+  const navigate = useNavigate();
 
-  const handleSubmiyt = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!user.name || !user.email || !user.password) {
-      alert("Please fill in all fields");
+      toast.error("⚠️ Please fill in all fields");
       return;
     }
 
@@ -28,30 +28,33 @@ const Register = () => {
         },
         body: JSON.stringify(user)
       });
-      
 
       const data = await res.json();
 
       if (res.ok) {
-        alert(data.message);
+        toast.success("🎉 Registration successful!");
         setUser({ name: "", email: "", password: "" });
-        navigate('/login')
+
+        setTimeout(() => {
+          navigate("/login");
+        }, 1500);
+
       } else {
-        alert(data.message || "Registration failed");
+        toast.error(data.message || "Registration failed ❌");
       }
+
     } catch (error) {
       console.log(error);
-      alert("Error registering user");
+      toast.error("Server error. Please try again ❌");
     }
   };
 
   return (
     <div className="register-page">
-      
+
       {/* LEFT SIDE */}
-      <div className="register-left">  
+      <div className="register-left">
         <h3 className="brand">BookNow</h3>
-        
 
         <h1>Create your account</h1>
         <p>
@@ -64,7 +67,7 @@ const Register = () => {
       <div className="register-right">
         <div className="register-card">
 
-          <form onSubmit={handleSubmiyt}>
+          <form onSubmit={handleSubmit}>
             <label>Name</label>
             <input
               type="text"

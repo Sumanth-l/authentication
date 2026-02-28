@@ -34,32 +34,41 @@ export default function Room() {
 
   // 🔒 Lock room before opening modal
   const handleRoomClick = async (room) => {
-    if (loading) return;
 
-    if (room.status !== "AVAILABLE") {
-      toast.error("Room not available ❌");
+  if (loading) return;
+
+  if (room.status !== "AVAILABLE") {
+    toast.error("Room not available ❌");
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    await axios.post(
+      "http://localhost:5000/api/room/lock",
+      { room_id: room.id },
+      { withCredentials: true }
+    );
+
+    setSelectedRoom(room);
+    setIsModalOpen(true);
+
+  } catch (error) {
+
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      toast.error("🔐 Please login before booking");
       return;
     }
 
-    try {
-      setLoading(true);
+    toast.error(
+      error.response?.data?.message || "Room already locked ❌"
+    );
 
-      await axios.post(
-        "http://localhost:5000/api/room/lock",
-        { room_id: room.id },
-        { withCredentials: true }
-      );
-
-
-      setSelectedRoom(room);
-      setIsModalOpen(true);
-
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Room already locked ❌");
-    } finally {
-      setLoading(false);
-    }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
 
   // 🔓 Unlock if modal closed without booking
   const handleModalClose = async () => {

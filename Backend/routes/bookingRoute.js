@@ -212,4 +212,44 @@ router.post("/booking/create", verifyToken, async (req, res) => {
   }
 });
 
+//calculate the distance
+router.get("/hotels", async (req, res) => {
+  try {
+    const { lat, lng } = req.query;
+
+    // If no location provided, return normally
+    if (!lat || !lng) {
+      const result = await pool.query(
+        "SELECT * FROM hotels ORDER BY id ASC"
+      );
+      return res.json(result.rows);
+    }
+
+    const result = await pool.query(
+      `
+      SELECT *,
+      (
+        6371 * acos(
+          cos(radians($1)) *
+          cos(radians(latitude)) *
+          cos(radians(longitude) - radians($2)) +
+          sin(radians($1)) *
+          sin(radians(latitude))
+        )
+      ) AS distance
+      FROM hotels
+      WHERE latitude IS NOT NULL
+      AND longitude IS NOT NULL
+      ORDER BY distance ASC
+      `,
+      [lat, lng]
+    );
+
+    res.json(result.rows);
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
